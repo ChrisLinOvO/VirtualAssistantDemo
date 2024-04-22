@@ -22,3 +22,6 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Setting lip_sync
+Rhubarb-Lip-Sync-1.13.0-macOS
