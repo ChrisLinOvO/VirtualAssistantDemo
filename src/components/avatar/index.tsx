@@ -40,7 +40,7 @@ const corresponding: { [key: string]: string } = {
   X: "viseme_PP",
 };
 
-export const useSkinnedControls = (
+const useSkinnedControls = (
   name: string,
   defaultValue: boolean,
   options: { min: number; max: number; step: number }
@@ -102,6 +102,7 @@ export default function Avatar({ ...props }: AvatarProps) {
 
   const animationObjects: { [key: string]: THREE.AnimationClip } = {};
   animationsData.forEach(({ key, path }) => {
+    // eslint-disable-next-line react-hooks/rules-of-hooks
     const { animations } = useFBX(path);
     animations[0].name = key;
     animationObjects[key] = animations[0];
@@ -238,6 +239,7 @@ export default function Avatar({ ...props }: AvatarProps) {
     } else {
       audio.pause();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [plauAudio, script]);
 
   return (
