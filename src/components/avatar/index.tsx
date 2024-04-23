@@ -6,6 +6,54 @@ import { useFrame, useLoader } from "@react-three/fiber";
 import * as THREE from "three";
 import { GLTF } from "three-stdlib";
 
+interface AvatarProps {
+  position: [number, number, number];
+}
+
+interface MouthCue {
+  start: number;
+  end: number;
+  value: string;
+}
+
+interface AnimationData {
+  key: string;
+  path: string;
+}
+
+interface AudioProps {
+  play: () => void;
+  pause: () => void;
+  currentTime: number;
+  src: string;
+}
+
+const corresponding: { [key: string]: string } = {
+  A: "viseme_PP",
+  B: "viseme_kk",
+  C: "viseme_I",
+  D: "viseme_AA",
+  E: "viseme_O",
+  F: "viseme_U",
+  G: "viseme_FF",
+  H: "viseme_TH",
+  X: "viseme_PP",
+};
+
+export const useSkinnedControls = (
+  name: string,
+  defaultValue: boolean,
+  options: { min: number; max: number; step: number }
+) => {
+  return useControls({
+    [name]: {
+      value: defaultValue,
+      ...options,
+      label: name,
+    },
+  });
+};
+
 type GLTFResult = GLTF & {
   nodes: {
     EyeLeft: THREE.SkinnedMesh;
@@ -39,57 +87,8 @@ type GLTFResult = GLTF & {
   };
 };
 
-interface MouthCue {
-  start: number;
-  end: number;
-  value: string;
-}
-
-interface AnimationData {
-  key: string;
-  path: string;
-}
-
-interface AvatarProps {
-  position: [number, number, number];
-}
-
-interface AudioProps {
-  play: () => void;
-  pause: () => void;
-  currentTime: number;
-  src: string;
-}
-
-const corresponding: { [key: string]: string } = {
-  A: "viseme_PP",
-  B: "viseme_kk",
-  C: "viseme_I",
-  D: "viseme_AA",
-  E: "viseme_O",
-  F: "viseme_U",
-  G: "viseme_FF",
-  H: "viseme_TH",
-  X: "viseme_PP",
-};
-
-const useSkinnedControls = (
-  name: string,
-  defaultValue: boolean,
-  options: { min: number; max: number; step: number }
-) => {
-  return useControls({
-    [name]: {
-      value: defaultValue,
-      ...options,
-      label: name,
-    },
-  });
-};
-
-const Avatar = ({ ...rest }: AvatarProps) => {
+export default function Avatar({ ...props }: AvatarProps) {
   const rootRef = useRef<THREE.Group>(null!);
-  const { sttInterimVal, isRecording } = useStore();
   const { nodes, materials } = useGLTF(
     "models/660a42e371dbbf09c6d79e6a.glb"
   ) as GLTFResult;
@@ -103,11 +102,12 @@ const Avatar = ({ ...rest }: AvatarProps) => {
 
   const animationObjects: { [key: string]: THREE.AnimationClip } = {};
   animationsData.forEach(({ key, path }) => {
-    // eslint-disable-next-line react-hooks/rules-of-hooks
     const { animations } = useFBX(path);
     animations[0].name = key;
     animationObjects[key] = animations[0];
   });
+
+  const { sttInterimVal, isRecording } = useStore();
 
   const { actions } = useAnimations(Object.values(animationObjects), rootRef);
 
@@ -238,10 +238,10 @@ const Avatar = ({ ...rest }: AvatarProps) => {
     } else {
       audio.pause();
     }
-  }, [plauAudio, script, audio, actions]);
+  }, [plauAudio, script]);
 
   return (
-    <group ref={rootRef} {...rest} dispose={null}>
+    <group ref={rootRef} {...props} dispose={null}>
       <primitive object={nodes.Hips} />
       {Wolf3D_Hair_Params.Wolf3D_Hair && (
         <skinnedMesh
@@ -318,9 +318,7 @@ const Avatar = ({ ...rest }: AvatarProps) => {
       />
     </group>
   );
-};
+}
 
 // have smile element
 useGLTF.preload("models/660a42e371dbbf09c6d79e6a.glb");
-
-export default Avatar;
