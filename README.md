@@ -4,7 +4,7 @@ This project is a virtual assistant constructed using React with Vite.
 
 ## Demo
 
-https://github.com/ChrisLinOvO/VirtualAssistantDemo/assets/65522190/f72410ba-18ed-4632-85c6-e3ff64e45ba8
+https://github.com/ChrisLinOvO/VirtualAssistantDemo/assets/65522190/3b4283eb-3c07-49b7-920c-a2e51b67016b
 
 ## Introduction
 
