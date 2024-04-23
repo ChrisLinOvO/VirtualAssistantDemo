@@ -3,7 +3,7 @@ import TextUI from "../text";
 import TranscriptMesh from "./TranscriptMesh";
 
 interface TranscriptProps {
-  transcriptRender: { id: string; transcript: string; offsetY: number }[];
+  transcriptRender: { id: number; transcript: string; offsetY: number }[];
   maxWidth: number;
   error: string | null;
   isRecording: boolean;

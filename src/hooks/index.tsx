@@ -3,10 +3,14 @@ import Hark from "hark";
 import { startRecording, stopRecording } from "./recorderHelpers";
 import { useStore, dispatch } from "../store";
 
-interface SpeechToTextOptions {
+// https://cloud.google.com/speech-to-text/docs/reference/rest/v1/RecognitionConfig
+import { GoogleCloudRecognitionConfig } from "./GoogleCloudRecognitionConfig";
+
+interface UseSpeechToTextTypes {
   continuous: boolean;
   crossBrowser: boolean;
   googleApiKey: string;
+  googleCloudRecognitionConfig?: GoogleCloudRecognitionConfig;
   onStartSpeaking?: () => void;
   onStoppedSpeaking?: () => void;
   speechRecognitionProperties?: {
@@ -20,40 +24,35 @@ interface SpeechToTextOptions {
   useLegacyResults?: boolean;
 }
 
-interface SpeechResult {
-  transcript: string;
+export type ResultType = {
+  speechBlob?: Blob;
   timestamp: number;
-}
+  transcript: string;
+};
 
-interface SpeechToTextHook {
-  error: string;
-  results: SpeechResult[] | string[];
-  startSpeechToText: () => void;
-  stopSpeechToText: () => void;
-}
-
-const AudioContext = window.AudioContext || window.webkitAudioContext;
+const AudioContext = window.AudioContext || (window as any).webkitAudioContext;
 const SpeechRecognition =
-  window.SpeechRecognition || window.webkitSpeechRecognition;
+  window.SpeechRecognition || (window as any).webkitSpeechRecognition;
 const recognition = new SpeechRecognition();
 
 const useSpeechToText = ({
   continuous,
   crossBrowser,
   googleApiKey,
+  googleCloudRecognitionConfig,
   onStartSpeaking,
   onStoppedSpeaking,
   speechRecognitionProperties = { interimResults: true },
   timeout = 10000,
   useOnlyGoogleCloud = false,
   useLegacyResults = true,
-}: SpeechToTextOptions): SpeechToTextHook => {
-  const audioContextRef = useRef<AudioContext | null>(null);
+}: UseSpeechToTextTypes) => {
+  const audioContextRef = useRef<AudioContext>();
   const [legacyResults, setLegacyResults] = useState<string[]>([]);
-  const [results, setResults] = useState<SpeechResult[]>([]);
+  const [results, setResults] = useState<ResultType[]>([]);
   const [error, setError] = useState<string>("");
-  const timeoutId = useRef<number | null>(null);
-  const mediaStream = useRef<MediaStream | null>(null);
+  const timeoutId = useRef<number>();
+  const mediaStream = useRef<MediaStream>();
   // Flag to check for first click
   const isFirstClick = useRef<boolean>(true);
   const { isRecording } = useStore();
@@ -197,7 +196,7 @@ const useSpeechToText = ({
       if (onStoppedSpeaking) onStoppedSpeaking();
       stopRecording({
         exportWAV: true,
-        wavCallback: (blob) =>
+        wavCallback: (blob: Blob) =>
           handleBlobToBase64({ blob, continuous: continuous || false }),
       });
     });
@@ -212,7 +211,8 @@ const useSpeechToText = ({
       stopMediaStream();
       stopRecording({
         exportWAV: true,
-        wavCallback: (blob) => handleBlobToBase64({ blob, continuous: false }),
+        wavCallback: (blob: Blob) =>
+          handleBlobToBase64({ blob, continuous: false }),
       });
     }
     isFirstClick.current = true;
@@ -247,6 +247,7 @@ const useSpeechToText = ({
         encoding: "LINEAR16",
         languageCode: "en-US",
         sampleRateHertz: sampleRate,
+        ...googleCloudRecognitionConfig,
       };
       const data = { config, audio };
       audio.content = base64data!
