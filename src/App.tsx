@@ -3,6 +3,9 @@ import { OrbitControls } from "@react-three/drei";
 import World from "./world";
 
 const App = () => {
+  console.log(`current title: ${import.meta.env.VITE_TITLE}`);
+  console.log(`current subTitle: ${import.meta.env.VITE_SUB_TITLE}`);
+  console.log(`current env: ${import.meta.env.VITE_ENVIRONMENT}`);
   return (
     <Canvas camera={{ position: [0, 0.05, 0.7] }}>
       <ambientLight intensity={Math.PI / 2} />
