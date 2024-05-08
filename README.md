@@ -94,7 +94,7 @@ VITE_GOOGLE_API_KEY='xxxxxxx'
 
 - Weight: Depends on which environment you are running to set this variable. If it is not set, it defaults to `.env`
 
-範例：
+Example：
 
 ```
 // .env.development
