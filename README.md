@@ -76,13 +76,49 @@ npm run dev
 
 Open http://localhost:5173/ to view the app in your browser.
 
+## Env Setting
+
+`.env` must be added to the directory, `VITE_GOOGLE_API_KEY` is a required item。
+
+```
+VITE_TITLE=DEFAULT_TITLE
+VITE_SUB_TITLE=DEFAULT_SUB_TITLE
+VITE_ENVIRONMENT=DEFAULT_ENVIRONMENT
+VITE_GOOGLE_API_KEY='xxxxxxx'
+```
+
+## Dynamic Environment Variables for Dockerized
+
+1. Add `.env.development` for `npm run dev`
+2. Add `.env.production` for `npm run build`
+
+- Weight: Depends on which environment you are running to set this variable. If it is not set, it defaults to `.env`
+
+範例：
+
+```
+// .env.development
+VITE_TITLE=DEV_TITLE
+VITE_SUB_TITLE=DEV_SUB_TITLE
+VITE_ENVIRONMENT=DEV_ENVIRONMENT
+```
+
+```
+// .env.production
+VITE_TITLE=PROD_TITLE
+VITE_SUB_TITLE=PROD_SUB_TITLE
+VITE_ENVIRONMENT=PROD_ENVIRONMENT
+```
+
+- Customize environment variables according to the deployment environment
+
 ## Notes
 
 - Optoin 1:
 
   - Make sure [GCP authentication](https://cloud.google.com/docs/authentication/application-default-credentials) is configured.
 
-  - Create a `.env.local` file and set `VITE_GOOGLE_API_KEY=''`.
+  - Create a `.env` file and set `VITE_GOOGLE_API_KEY=''`.
 
 - Optoin 2:
 
@@ -105,6 +141,9 @@ Open http://localhost:5173/ to view the app in your browser.
   - Convert the FBX file to GLB format using a tool like [Blender's](https://www.blender.org/download/)GLB converter.
 
   - If you need to change avatar morph targets, refer to the [documentation](https://docs.readyplayer.me/ready-player-me/api-reference/rest-api/avatars/get-3d-avatars#examples-7). This project uses `?morphTargets=Oculus Visemes` in the browser URL to download the GLB file.
+
+- Optoin 4:
+  - Dynamic Environment Variables for Dockerized：https://dev.to/sanjayttg/dynamic-environment-variables-for-dockerized-react-apps-5bc5
 
 ## Contact
 
