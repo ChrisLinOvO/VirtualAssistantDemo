@@ -109,7 +109,6 @@ VITE_GOOGLE_API_KEY='xxxxxx'
 VITE_TITLE=DEV_TITLE
 VITE_SUB_TITLE=DEV_SUB_TITLE
 VITE_ENVIRONMENT=DEV_ENVIRONMENT
-VITE_GOOGLE_API_KEY='xxxxxx'
 ```
 
 ```
@@ -117,7 +116,6 @@ VITE_GOOGLE_API_KEY='xxxxxx'
 VITE_TITLE=PROD_TITLE
 VITE_SUB_TITLE=PROD_SUB_TITLE
 VITE_ENVIRONMENT=PROD_ENVIRONMENT
-VITE_GOOGLE_API_KEY='xxxxxx'
 ```
 
 2. Add shell script
@@ -179,6 +177,8 @@ RUN chmod +x /docker-entrypoint.d/env.sh
 ```zsh
 docker image build -t <your_image_name> .
 ```
+
+You can utilize Docker to dynamically alter variables, thus achieving dynamically generated results in a production environment.
 
 ```zsh
 docker run -p 8088:80 -e PROD_TITLE=IS_PROD_TITLE -e PROD_ENVIRONMENT=IS_PROD <your_image_name>
