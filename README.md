@@ -181,7 +181,7 @@ docker image build -t <your_image_name> .
 You can utilize Docker to dynamically alter variables, thus achieving dynamically generated results in a production environment.
 
 ```zsh
-docker run -p 8088:80 -e PROD_TITLE=IS_PROD_TITLE -e PROD_ENVIRONMENT=IS_PROD <your_image_name>
+docker run -p 8080:80 -e PROD_TITLE=IS_PROD_TITLE -e PROD_ENVIRONMENT=IS_PROD <your_image_name>
 ```
 
 ## Notes
