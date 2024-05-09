@@ -159,7 +159,7 @@ docker image build -t <your_image_name> .
 ```
 
 ```zsh
-docker run -p 8080:80 -e DEFAULT_TITLE=IS_PROD_TITLE -e DEFAULT_ENVIRONMENT=IS_PROD <your_image_name>
+docker run -p 8088:80 -e DEFAULT_TITLE=IS_PROD_TITLE -e DEFAULT_ENVIRONMENT=IS_PROD <your_image_name>
 ```
 
 ## Notes
