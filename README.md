@@ -89,28 +89,78 @@ VITE_GOOGLE_API_KEY='xxxxxxx'
 
 ## Dynamic Environment Variables for Dockerized
 
-1. Add `.env.development` for `npm run dev`
-2. Add `.env.production` for `npm run build`
-
-- Weight: Depends on which environment you are running to set this variable. If it is not set, it defaults to `.env`
-
-Example：
+1. Setting environment
 
 ```
-// .env.development
-VITE_TITLE=DEV_TITLE
-VITE_SUB_TITLE=DEV_SUB_TITLE
-VITE_ENVIRONMENT=DEV_ENVIRONMENT
+VITE_TITLE=DEFAULT_TITLE
+VITE_SUB_TITLE=DEFAULT_SUB_TITLE
+VITE_ENVIRONMENT=DEFAULT_ENVIRONMENT
+VITE_GOOGLE_API_KEY='xxxxxx'
 ```
 
-```
-// .env.production
-VITE_TITLE=PROD_TITLE
-VITE_SUB_TITLE=PROD_SUB_TITLE
-VITE_ENVIRONMENT=PROD_ENVIRONMENT
+2. Add shell script
+   Since all environment values now start with `DEFAULT_`, you can create a script that looks for all environment variables starting with `DEFAULT_` and performs replacements for each of them. Create a shell script called `.env.sh` inside your project
+
+```shell
+#!/bin/sh
+for i in $(env | grep DEFAULT_)
+do
+	key=$(echo $i | cut -d '=' -f 1)
+	value=$(echo $i | cut -d '=' -f 2-)
+	echo $key=$value
+    # sed All files
+	# find /usr/share/nginx/html -type f -exec sed -i "s|${key}|${value}|g" '{}' +
+
+    # sed JS and CSS only
+    find /usr/share/nginx/html -type f \( -name '*.js' -o -name '*.css' \) -exec sed -i "s|${key}|${value}|g" '{}' +
+done
 ```
 
-- Customize environment variables according to the deployment environment
+3. Add Nginx server
+   We can package the React application and run it on Nginx server. Of particular note is configuring the Nginx server to return the index.html file when a 404 error occurs, so that React routing can correctly handle the path to the website.
+
+```conf
+server {
+  listen 80;
+  location / {
+    root /usr/share/nginx/html;
+    index index.html index.htm;
+    try_files $uri $uri/ /index.html =404;
+  }
+}
+```
+
+4. Create a Dockerfile
+
+- Stage 1: Build Image
+- Stage 2: use the compiled app, ready for production with Nginx
+
+```Dockerfile
+# Stage 1: Build Image
+FROM node:20-alpine as build
+WORKDIR /app
+COPY package*.json ./
+RUN npm install
+COPY . .
+RUN npm run build
+
+# Stage 2: use the compiled app, ready for production with Nginx
+FROM nginx:alpine
+COPY --from=build /app/dist /usr/share/nginx/html
+COPY /nginx-custom.conf /etc/nginx/conf.d/default.conf
+COPY env.sh /docker-entrypoint.d/env.sh
+RUN chmod +x /docker-entrypoint.d/env.sh
+```
+
+5. Create a Docker image and run a Docker container
+
+```zsh
+docker image build -t <your_image_name> .
+```
+
+```zsh
+docker run -p 8080:80 -e DEFAULT_TITLE=IS_PROD_TITLE -e DEFAULT_ENVIRONMENT=IS_PROD <your_image_name>
+```
 
 ## Notes
 
