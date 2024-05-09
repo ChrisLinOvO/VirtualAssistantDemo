@@ -91,8 +91,8 @@ VITE_GOOGLE_API_KEY='xxxxxxx'
 
 1. Setting environment
 
-run `npm run dev` will get the `.env.development` environment variable.
-run `npm run build` will get the `.env.production` environment variable.
+- run `npm run dev` will get the `.env.development` environment variable.
+- run `npm run build` will get the `.env.production` environment variable.
 
 Example:
 
