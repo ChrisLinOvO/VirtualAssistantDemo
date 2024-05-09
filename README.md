@@ -91,19 +91,41 @@ VITE_GOOGLE_API_KEY='xxxxxxx'
 
 1. Setting environment
 
+run `npm run dev` will get the `.env.development` environment variable.
+run `npm run build` will get the `.env.production` environment variable.
+
+Example:
+
 ```
+// .env
 VITE_TITLE=DEFAULT_TITLE
 VITE_SUB_TITLE=DEFAULT_SUB_TITLE
 VITE_ENVIRONMENT=DEFAULT_ENVIRONMENT
 VITE_GOOGLE_API_KEY='xxxxxx'
 ```
 
+```
+// .env.development
+VITE_TITLE=DEV_TITLE
+VITE_SUB_TITLE=DEV_SUB_TITLE
+VITE_ENVIRONMENT=DEV_ENVIRONMENT
+VITE_GOOGLE_API_KEY='xxxxxx'
+```
+
+```
+// .env.production
+VITE_TITLE=PROD_TITLE
+VITE_SUB_TITLE=PROD_SUB_TITLE
+VITE_ENVIRONMENT=PROD_ENVIRONMENT
+VITE_GOOGLE_API_KEY='xxxxxx'
+```
+
 2. Add shell script
-   Since all environment values now start with `DEFAULT_`, you can create a script that looks for all environment variables starting with `DEFAULT_` and performs replacements for each of them. Create a shell script called `.env.sh` inside your project
+   Since all environment values now start with `PROD_`, you can create a script that looks for all environment variables starting with `PROD_` and performs replacements for each of them. Create a shell script called `.env.sh` inside your project
 
 ```shell
 #!/bin/sh
-for i in $(env | grep DEFAULT_)
+for i in $(env | grep PROD_)
 do
 	key=$(echo $i | cut -d '=' -f 1)
 	value=$(echo $i | cut -d '=' -f 2-)
@@ -159,7 +181,7 @@ docker image build -t <your_image_name> .
 ```
 
 ```zsh
-docker run -p 8088:80 -e DEFAULT_TITLE=IS_PROD_TITLE -e DEFAULT_ENVIRONMENT=IS_PROD <your_image_name>
+docker run -p 8088:80 -e PROD_TITLE=IS_PROD_TITLE -e PROD_ENVIRONMENT=IS_PROD <your_image_name>
 ```
 
 ## Notes

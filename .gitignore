@@ -28,3 +28,5 @@ Rhubarb-Lip-Sync-1.13.0-macOS
 
 # Environment
 .env
+.env.development
+.env.production
